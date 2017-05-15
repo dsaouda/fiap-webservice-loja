@@ -1,4 +1,4 @@
-package com.github.dsaouda.fiap.webservice.loja.exception;
+package com.github.dsaouda.fiap.webservice.loja.api.exception;
 
 public class ProdutoNaoEncontradoException extends RuntimeException {
 

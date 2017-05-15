@@ -1,10 +1,10 @@
-package com.github.dsaouda.fiap.webservice.loja.repository;
+package com.github.dsaouda.fiap.webservice.loja.api.repository;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.github.dsaouda.fiap.webservice.loja.model.Produto;
+import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
 
 final public class ProdutoRepository {
 

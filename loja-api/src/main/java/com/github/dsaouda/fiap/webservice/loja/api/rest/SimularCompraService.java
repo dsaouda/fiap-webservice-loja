@@ -1,4 +1,4 @@
-package com.github.dsaouda.fiap.webservice.loja.rest;
+package com.github.dsaouda.fiap.webservice.loja.api.rest;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,14 +11,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.github.dsaouda.fiap.webservice.loja.model.Produto;
-import com.github.dsaouda.fiap.webservice.loja.repository.ProdutoRepository;
+import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
+import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;
 
 @Path("/simular-compra")
 public class SimularCompraService {
 
-	@POST
-	
+	@POST	
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Map<String, Object> store(List<Produto> codigosProdutos) {

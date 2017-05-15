@@ -1,4 +1,4 @@
-package com.github.dsaouda.fiap.webservice.loja;
+package com.github.dsaouda.fiap.webservice.loja.api;
 
 import java.io.IOException;
 import java.net.URI;
@@ -20,15 +20,14 @@ public class Application {
 			env.load(Application.class.getResourceAsStream("/application.properties"));
 			baseUri = env.getProperty("server.host");
 		} catch (IOException e) {
-			System.out.println("Você precisa configurar um arquivo chamado application.properties");
-			
+			System.out.println("Você precisa configurar um arquivo chamado application.properties");			
 			throw new RuntimeException(e);
 		}
     	
 	}
 	
     public static HttpServer startServer() {
-        final ResourceConfig rc = new ResourceConfig().packages("com.github.dsaouda.fiap.webservice.loja.rest");
+        final ResourceConfig rc = new ResourceConfig().packages("com.github.dsaouda.fiap.webservice.loja.api.rest");
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(baseUri), rc);
     }
 

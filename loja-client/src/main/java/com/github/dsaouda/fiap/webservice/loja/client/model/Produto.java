@@ -1,8 +1,11 @@
-package com.github.dsaouda.fiap.webservice.loja.model;
+package com.github.dsaouda.fiap.webservice.loja.client.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name="produto")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Produto {
 
 	private long codigo;
@@ -10,29 +13,24 @@ public class Produto {
 	private int quantidadeEstoque;
 	private Double valorUnitario;
 	
-	protected Produto() {}
-	
-	public Produto(long codigo, String descricao, int quantidadeEstoque, Double valorUnitario) {
+	public Produto setCodigo(long codigo) {
 		this.codigo = codigo;
+		return this;
+	}
+
+	public Produto setDescricao(String descricao) {
 		this.descricao = descricao;
+		return this;
+	}
+
+	public Produto setQuantidadeEstoque(int quantidadeEstoque) {
 		this.quantidadeEstoque = quantidadeEstoque;
+		return this;
+	}
+
+	public Produto setValorUnitario(Double valorUnitario) {
 		this.valorUnitario = valorUnitario;
-	}
-	
-	public void setCodigo(long codigo) {
-		this.codigo = codigo;
-	}
-
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
-	public void setQuantidadeEstoque(int quantidadeEstoque) {
-		this.quantidadeEstoque = quantidadeEstoque;
-	}
-
-	public void setValorUnitario(Double valorUnitario) {
-		this.valorUnitario = valorUnitario;
+		return this;
 	}
 
 	public long getCodigo() {
