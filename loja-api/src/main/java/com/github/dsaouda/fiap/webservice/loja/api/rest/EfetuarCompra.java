@@ -20,8 +20,8 @@ public class EfetuarCompra {
 	public boolean store(Pedido pedido) {		
 		//@TODO precisamos debitar do estoque?
 		
-		//capturando maiores informaÁıes sobre os produtos
-		//o cliente n„o envia detalhes do protudo
+		//capturando maiores informa√ß√µes sobre o produto
+		//o cliente n√£o envia detalhe dos produtos, apenas c√≥digo
 		pedido.setListaProdutos(
 			pedido.getListaProdutos()
 				.stream()
@@ -40,7 +40,7 @@ public class EfetuarCompra {
 		
 		//solicitacao de entrega ao grupo transportadora
 		
-		//qtd estoque 0, solicitar ao grupo fornecedor, se o grupo n„o tiver produto, retornar 0
+		//qtd estoque 0, solicitar ao grupo fornecedor, se o grupo n√£o tiver o produto, retornar 0
 		
 		return true;
 	}
