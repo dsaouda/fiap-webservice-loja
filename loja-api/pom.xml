@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.dsaouda.fiap.webservice.loja</groupId>
 	<artifactId>loja-api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>loja-api</name>
 	<description>API loja</description>
 
