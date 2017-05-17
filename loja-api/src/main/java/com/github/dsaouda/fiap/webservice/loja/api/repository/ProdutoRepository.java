@@ -31,7 +31,7 @@ final public class ProdutoRepository {
 	
 	public static Produto findByCodigo(long codigo) {
 		if (!produtos.containsKey(codigo)) {
-			throw new ProdutoNaoEncontradoException();
+			throw new ProdutoNaoEncontradoException(codigo);
 		}
 		
 		return produtos.get(codigo);
