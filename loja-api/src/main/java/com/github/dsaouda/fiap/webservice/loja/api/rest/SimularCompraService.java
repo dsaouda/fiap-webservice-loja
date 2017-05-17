@@ -11,7 +11,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
+import com.github.dsaouda.fiap.webservice.loja.api.exception.ProdutoNaoEncontradoException;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
 import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;
 
@@ -22,11 +24,13 @@ public class SimularCompraService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response store(List<Produto> codigosProdutos) {
+		List<Produto> produtos;
 		
-		//capturar os produtos do banco de dados
-		List<Produto> produtos = codigosProdutos.stream()
-			.map(p -> ProdutoRepository.findByCodigo(p.getCodigo()))
-			.collect(Collectors.toList());
+		try {
+			produtos = getProdutos(codigosProdutos);
+		} catch (ProdutoNaoEncontradoException e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
 		
 		//valor total dos produtos
 		double valorTotalProdutos = produtos.stream().mapToDouble(p -> p.getValorUnitario()).sum();
@@ -48,5 +52,11 @@ public class SimularCompraService {
 		
 		return Response.ok(response).build();
 	}
-	 
+
+	private List<Produto> getProdutos(List<Produto> codigosProdutos) {		
+		List<Produto> produtos = codigosProdutos.stream()
+				.map(p -> ProdutoRepository.findByCodigo(p.getCodigo()))			
+				.collect(Collectors.toList());
+		return produtos;
+	}	 
 }
