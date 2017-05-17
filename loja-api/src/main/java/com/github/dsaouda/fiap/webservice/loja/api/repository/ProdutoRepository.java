@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.github.dsaouda.fiap.webservice.loja.api.exception.ProdutoNaoEncontradoException;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
 
 final public class ProdutoRepository {
@@ -30,7 +31,7 @@ final public class ProdutoRepository {
 	
 	public static Produto findByCodigo(long codigo) {
 		if (!produtos.containsKey(codigo)) {
-			//throw new ProdutoNaoEncontradoException();
+			throw new ProdutoNaoEncontradoException();
 		}
 		
 		return produtos.get(codigo);

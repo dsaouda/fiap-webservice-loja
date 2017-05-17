@@ -10,6 +10,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
 import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;
@@ -20,7 +21,7 @@ public class SimularCompraService {
 	@POST	
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Map<String, Object> store(List<Produto> codigosProdutos) {
+	public Response store(List<Produto> codigosProdutos) {
 		
 		//capturar os produtos do banco de dados
 		List<Produto> produtos = codigosProdutos.stream()
@@ -45,7 +46,7 @@ public class SimularCompraService {
 		response.put("valorImpostos", valorImpostos);
 		response.put("valorTotal", valorFrete+valorImpostos+valorTotalProdutos);
 		
-		return response;
+		return Response.ok(response).build();
 	}
 	 
 }
