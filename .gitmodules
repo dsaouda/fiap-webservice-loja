@@ -1,0 +1,3 @@
+[submodule "loja-api/target"]
+	path = loja-api/target
+	url = https://git.heroku.com/fiap-ws-loja.git

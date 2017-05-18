@@ -14,7 +14,7 @@ import com.github.dsaouda.fiap.webservice.loja.api.exception.ExceptionHandler;
 
 public class GrizzlyServer {
 
-	private static final String defaultHost = "http://localhost";
+	private static final String defaultHost = "http://0.0.0.0";
 	private static final String defaultPort = "8080";
 	private URI uri;
 	
