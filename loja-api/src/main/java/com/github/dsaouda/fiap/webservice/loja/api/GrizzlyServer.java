@@ -5,6 +5,8 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletConfig;
+
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -29,6 +31,7 @@ public class GrizzlyServer {
 		
         final ResourceConfig resourceConfig = new ResourceConfig().packages(packages);
         resourceConfig.register(JacksonFeature.class);
+        resourceConfig.register(ServletConfig.class);
         resourceConfig.registerClasses(ExceptionHandler.class);
         resourceConfig.register(io.swagger.jaxrs.listing.ApiListingResource.class);
         resourceConfig.register(io.swagger.jaxrs.listing.SwaggerSerializers.class);
