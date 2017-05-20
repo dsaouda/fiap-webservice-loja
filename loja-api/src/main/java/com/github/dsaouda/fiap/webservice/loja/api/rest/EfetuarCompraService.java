@@ -9,7 +9,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.github.dsaouda.fiap.webservice.loja.api.exception.FornecedorNaoPodeRealizarOPedidoException;
-import com.github.dsaouda.fiap.webservice.loja.api.exception.GovernoNaoPOdeEmitirNotaException;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Pedido;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
 import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;

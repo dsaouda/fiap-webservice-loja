@@ -55,6 +55,9 @@ public class Produto {
 	}
 	
 	public void decrementaDoEstoque() {
+		
+		//não permitir estoque ficar negativo, pois uma solicitação é feita ao grupo fornecedor
+		if (quantidadeEstoque > 0) 
 		quantidadeEstoque--;
 	}
 	
