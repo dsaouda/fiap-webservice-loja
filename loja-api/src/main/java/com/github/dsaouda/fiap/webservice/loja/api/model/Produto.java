@@ -53,6 +53,14 @@ public class Produto {
 	public Double getValorUnitario() {
 		return valorUnitario;
 	}
+	
+	public void decrementaDoEstoque() {
+		quantidadeEstoque--;
+	}
+	
+	public void acrescentaNoEstoque() {
+		quantidadeEstoque++;
+	}
 
 	@Override
 	public String toString() {

@@ -7,7 +7,7 @@ import br.com.fiap.fornecedor.ws.FornecedorWS;
 import br.com.fiap.fornecedor.ws.PedidoDTO;
 import br.com.fiap.fornecedor.ws.ProdutoDTO;
 
-public class ExemploFornecedorProdutos2 {
+public class ExemploFornecedorPedido {
 	public static void main(String[] args) throws FornecedorException_Exception {		
 		FornecedorWS port = FornecedorPortFactory.create();
 		
