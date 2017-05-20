@@ -33,7 +33,7 @@ public class EfetuarCompraService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean store(Pedido pedido) {		
+	public boolean comprar(Pedido pedido) {		
 		//@TODO precisamos debitar do estoque?
 		//@TODO aguardando os outros grupos
 		

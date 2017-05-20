@@ -26,7 +26,7 @@ public class SimularCompraService {
 	@POST	
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response store(List<Produto> codigosProdutos) {
+	public Response simular(List<Produto> codigosProdutos) {
 		List<Produto> produtos;
 		
 		try {
