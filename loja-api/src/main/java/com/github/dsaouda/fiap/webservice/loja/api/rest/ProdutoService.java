@@ -14,6 +14,9 @@ import com.github.dsaouda.fiap.webservice.loja.api.exception.ProdutoNaoEncontrad
 import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
 import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;
 
+import io.swagger.annotations.Api;
+
+@Api
 @Path("/produtos")
 public class ProdutoService {
 	

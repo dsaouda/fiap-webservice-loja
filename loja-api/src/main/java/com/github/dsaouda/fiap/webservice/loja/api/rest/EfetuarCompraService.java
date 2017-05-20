@@ -11,6 +11,9 @@ import javax.ws.rs.core.MediaType;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Pedido;
 import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;
 
+import io.swagger.annotations.Api;
+
+@Api
 @Path("/efetuar-compra")
 public class EfetuarCompraService {
 	
