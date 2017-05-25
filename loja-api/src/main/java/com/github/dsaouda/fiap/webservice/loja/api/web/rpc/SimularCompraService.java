@@ -1,4 +1,4 @@
-package com.github.dsaouda.fiap.webservice.loja.api.rest;
+package com.github.dsaouda.fiap.webservice.loja.api.web.rpc;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,19 +14,29 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.github.dsaouda.fiap.webservice.loja.api.exception.ProdutoNaoEncontradoException;
+import com.github.dsaouda.fiap.webservice.loja.api.model.Loja;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
 import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;
+import com.github.dsaouda.fiap.webservice.loja.governo.client.factory.GovernoPortFactory;
 
+import br.com.governo.ws.Exception_Exception;
+import br.com.governo.ws.Governo;
 import io.swagger.annotations.Api;
 
 @Api
 @Path("/simular-compra")
 public class SimularCompraService {
+	
+	private Governo governoService;
 
+	public SimularCompraService() {
+		governoService = GovernoPortFactory.create(Loja.GOVERNO_DOCUMENTO, Loja.GOVERNO_SENHA);
+	}
+	
 	@POST	
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response store(List<Produto> codigosProdutos) {
+	public Response simular(List<Produto> codigosProdutos) {
 		List<Produto> produtos;
 		
 		try {
@@ -39,7 +49,15 @@ public class SimularCompraService {
 		double valorTotalProdutos = produtos.stream().mapToDouble(p -> p.getValorUnitario()).sum();
 		
 		double valorFrete = 18.0;
-		double valorImpostos = valorTotalProdutos * 0.05;
+		double porcentagemImpostos;
+		
+		try {
+			porcentagemImpostos = retornarImpostos();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_GATEWAY).encoding(e.getMessage()).build();
+		}
+		
+		double valorImpostos = (valorFrete+valorTotalProdutos) * porcentagemImpostos / 100;
 		
 		List<String> valoresProdutos = produtos.stream().map(p -> {
 			return p.getCodigo() + " => " + p.getDescricao() + " ("+p.getValorUnitario()+")";
@@ -51,9 +69,15 @@ public class SimularCompraService {
 		response.put("valorTotalProdutos", valorTotalProdutos);
 		response.put("valorFrete", valorFrete);
 		response.put("valorImpostos", valorImpostos);
-		response.put("valorTotal", valorFrete+valorImpostos+valorTotalProdutos);
+		response.put("porcentagemImpostos", porcentagemImpostos);
+		response.put("valorTotal", valorFrete+valorTotalProdutos+valorImpostos);
 		
 		return Response.ok(response).build();
+	}
+
+	private double retornarImpostos() throws Exception_Exception {
+		double valorImpostos = governoService.listarImpostos().stream().mapToDouble(i -> i.getAliquota()).sum();
+		return valorImpostos;
 	}
 
 	private List<Produto> getProdutos(List<Produto> codigosProdutos) {		
