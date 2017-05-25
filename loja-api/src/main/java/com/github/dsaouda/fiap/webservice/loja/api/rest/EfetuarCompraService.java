@@ -13,6 +13,8 @@ import com.github.dsaouda.fiap.webservice.loja.api.model.Pedido;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
 import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;
 import com.github.dsaouda.fiap.webservice.loja.fornecedor.client.factory.FornecedorPortFactory;
+import com.github.dsaouda.fiap.webservice.transportadora.client.GerarFreteClient;
+import com.github.dsaouda.fiap.webservice.transportadora.client.model.GerarFreteRequest;
 
 import br.com.fiap.fornecedor.ws.FornecedorException_Exception;
 import br.com.fiap.fornecedor.ws.FornecedorWS;
@@ -24,6 +26,7 @@ import io.swagger.annotations.Api;
 @Path("/efetuar-compra")
 public class EfetuarCompraService {
 	
+	private static final String CNPJ_LOJA = null;
 	private FornecedorWS fornecedorService;
 
 	public EfetuarCompraService() {
@@ -45,7 +48,7 @@ public class EfetuarCompraService {
 			if (enviarPedidoFornecedor(pedido) == false) {
 				throw new FornecedorNaoPodeRealizarOPedidoException();
 			}
-	
+			
 			//emitir nota fiscal com grupo governo
 			//boolean notaEmitida = governoClient.emitirNota();
 			//throw new GovernoNaoPOdeEmitirNotaException();
@@ -54,7 +57,7 @@ public class EfetuarCompraService {
 			//financeiraClient.debitarValor(valorTotal);
 			
 			//solicitacao de entrega ao grupo transportadora
-			//transportadoraClient.solicitarEntrega(produtos);
+			gerarFrete(pedido);
 			
 			return true;
 			
@@ -102,4 +105,19 @@ public class EfetuarCompraService {
 		return fornecedorService.efetuarPedido(pedidoFornecedor);
 	}
 	
+	
+	private void gerarFrete(Pedido pedido) {
+
+		double valorTotalRemessa = pedido.getListaProdutos().stream().mapToDouble(p -> p.getValorUnitario()).sum();
+		int quantidadeProdutos = pedido.getListaProdutos().size();
+
+		GerarFreteRequest request = new GerarFreteRequest();
+		request.setValorTotalRemessa(valorTotalRemessa);
+		request.setQuantidadeProdutos(quantidadeProdutos);
+		request.setCpfCnpjDestinatario(pedido.getDocumento());
+		request.setCpfCnpjRemetente(CNPJ_LOJA);
+
+		GerarFreteClient client = new GerarFreteClient();
+		client.gerar(request);
+	}	
 }

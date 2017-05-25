@@ -19,6 +19,11 @@
 			<artifactId>fornecedor-client</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.dsaouda.fiap.webservice.loja</groupId>
+			<artifactId>transportadora-client</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>

@@ -34,10 +34,4 @@ Siga os passos abaixo para executar a api:
  - Clique `"Try it out"`
  - Copie e cole `{"documento": "12345678912","tipoDocumento": "CPF", "nomeCliente": "Teste", "listaProdutos": [{"codigo": 1}, {"codigo": 2}]}` em **"Example Value"**
  - Depois clique em `"Execute"`
- - O resultado será exibido em Response -> Details
- 
- teste vinicius
- 
- 
- 
- 
+ - O resultado será exibido em Response -> Details 
