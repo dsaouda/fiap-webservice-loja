@@ -12,7 +12,7 @@ public class ExemploCalcularFrete {
 		request.setValorTotalRemessa(1000000.0);
 		request.setQuantidadeProdutos(1000);
 		
-		// OU PADR√O
+		// OU PADR√ÉO
 		CalcularFreteClient client = new CalcularFreteClient();
 		
 		System.out.println(client.calcular(request));
