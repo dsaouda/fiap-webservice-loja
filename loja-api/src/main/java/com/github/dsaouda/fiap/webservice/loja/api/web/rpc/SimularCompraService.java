@@ -18,6 +18,8 @@ import com.github.dsaouda.fiap.webservice.loja.api.model.Loja;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
 import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;
 import com.github.dsaouda.fiap.webservice.loja.governo.client.factory.GovernoPortFactory;
+import com.github.dsaouda.fiap.webservice.transportadora.client.CalcularFreteClient;
+import com.github.dsaouda.fiap.webservice.transportadora.client.model.CalcularFreteRequest;
 
 import br.com.governo.ws.Exception_Exception;
 import br.com.governo.ws.Governo;
@@ -48,7 +50,8 @@ public class SimularCompraService {
 		//valor total dos produtos
 		double valorTotalProdutos = produtos.stream().mapToDouble(p -> p.getValorUnitario()).sum();
 		
-		double valorFrete = 18.0;
+		int quantidadeProdutos = produtos.size();
+		double valorFrete = calculaFrete(quantidadeProdutos, valorTotalProdutos);
 		double porcentagemImpostos;
 		
 		try {
@@ -58,6 +61,7 @@ public class SimularCompraService {
 		}
 		
 		double valorImpostos = (valorFrete+valorTotalProdutos) * porcentagemImpostos / 100;
+
 		
 		List<String> valoresProdutos = produtos.stream().map(p -> {
 			return p.getCodigo() + " => " + p.getDescricao() + " ("+p.getValorUnitario()+")";
@@ -86,4 +90,15 @@ public class SimularCompraService {
 				.collect(Collectors.toList());
 		return produtos;
 	}	 
+	
+	
+	private Double calculaFrete(int quantidadeProdutos, Double valorTotalRemessa ){
+		
+		CalcularFreteRequest req = new CalcularFreteRequest();
+		req.setQuantidadeProdutos(quantidadeProdutos);
+		req.setValorTotalRemessa(valorTotalRemessa);
+
+		CalcularFreteClient client = new CalcularFreteClient();
+		return client.calcular(req);
+	}
 }
