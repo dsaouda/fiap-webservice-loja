@@ -1,5 +1,9 @@
 # fiap-webservice-loja
 
+ - Download projeto versão eclipse https://github.com/dsaouda/fiap-webservice-loja/releases/tag/1.0.0
+ - print soap ui
+
+
 # loja-api
 
 Webservice rest rcp grupo loja.
