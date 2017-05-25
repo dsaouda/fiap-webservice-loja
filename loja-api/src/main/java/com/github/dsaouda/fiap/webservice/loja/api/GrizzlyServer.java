@@ -75,6 +75,8 @@ public class GrizzlyServer {
 	}
 
 	public void enableLogger() {
+		 System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
+		
 		Logger l = Logger.getLogger("org.glassfish.grizzly.http.server.HttpHandler");
 		l.setLevel(Level.ALL);
 		l.setUseParentHandlers(false);
