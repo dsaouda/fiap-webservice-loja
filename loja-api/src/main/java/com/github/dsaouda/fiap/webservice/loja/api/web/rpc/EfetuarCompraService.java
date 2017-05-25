@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.github.dsaouda.fiap.webservice.loja.api.exception.FinanceiroNaoPodeDebitarValorException;
 import com.github.dsaouda.fiap.webservice.loja.api.exception.FornecedorNaoPodeRealizarOPedidoException;
 import com.github.dsaouda.fiap.webservice.loja.api.exception.GovernoNaoPodeEmitirNotaException;
+import com.github.dsaouda.fiap.webservice.loja.api.exception.TransportadoraIndisponivelException;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Loja;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Pedido;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
@@ -22,6 +23,9 @@ import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;
 import com.github.dsaouda.fiap.webservice.loja.financeiro.client.factory.FinanceiroPortFactory;
 import com.github.dsaouda.fiap.webservice.loja.fornecedor.client.factory.FornecedorPortFactory;
 import com.github.dsaouda.fiap.webservice.loja.governo.client.factory.GovernoPortFactory;
+import com.github.dsaouda.fiap.webservice.transportadora.client.GerarFreteClient;
+import com.github.dsaouda.fiap.webservice.transportadora.client.model.GerarFreteRequest;
+import com.github.dsaouda.fiap.webservice.transportadora.client.model.GerarFreteResponse;
 
 import br.com.fiap.fornecedor.ws.FornecedorException_Exception;
 import br.com.fiap.fornecedor.ws.FornecedorWS;
@@ -69,8 +73,15 @@ public class EfetuarCompraService {
 				throw new FinanceiroNaoPodeDebitarValorException();
 			}
 			
-			//solicitacao de entrega ao grupo transportadora
-			//transportadoraClient.solicitarEntrega(produtos);
+			try {
+				logger.info("solicitação de entrega a transportadora");
+				GerarFreteResponse entrega = solicitacaoDeEntrega(pedido);
+				logger.info("transportadora resposta {}", entrega.getMensagem());
+				
+				
+			} catch (Exception e) {
+				throw new TransportadoraIndisponivelException();
+			}
 			
 			return Response.ok(true).build();
 			
@@ -116,8 +127,8 @@ public class EfetuarCompraService {
 	}
 
 	private void preencherProdutoNoPedido(Pedido pedido) {
-		//capturando maiores informaÃ§Ãµes sobre o produto
-		//o cliente nÃ£o envia detalhe dos produtos, apenas cÃ³digo
+		//capturando maiores informações sobre o produto
+		//o cliente não envia detalhe dos produtos, apenas código
 		pedido.setListaProdutos(
 			pedido.getListaProdutos()
 				.stream()
@@ -166,5 +177,20 @@ public class EfetuarCompraService {
 		logger.info("nÃ£o foram enviados pedidos ao fornecedor");
 		return true;
 	}
+	
+	private GerarFreteResponse solicitacaoDeEntrega(Pedido pedido) {
+
+		double valorTotalRemessa = pedido.getListaProdutos().stream().mapToDouble(p -> p.getValorUnitario()).sum();
+		int quantidadeProdutos = pedido.getListaProdutos().size();
+
+		GerarFreteRequest request = new GerarFreteRequest();
+		request.setValorTotalRemessa(valorTotalRemessa);
+		request.setQuantidadeProdutos(quantidadeProdutos);
+		request.setCpfCnpjDestinatario(pedido.getDocumento());
+		request.setCpfCnpjRemetente(Loja.CNPJ_LOJA);
+
+		GerarFreteClient client = new GerarFreteClient();
+		return client.gerar(request);
+	}	
 	
 }

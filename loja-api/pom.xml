@@ -22,6 +22,12 @@
 
 		<dependency>
 			<groupId>com.github.dsaouda.fiap.webservice.loja</groupId>
+			<artifactId>transportadora-client</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.dsaouda.fiap.webservice.loja</groupId>
 			<artifactId>financeiro-client</artifactId>
 			<version>1.0.0</version>
 		</dependency>
