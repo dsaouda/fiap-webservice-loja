@@ -56,9 +56,14 @@ public class Pedido {
 		this.listaProdutos = listaProdutos;
 	}
 
+	public Double getValorTotal() {
+		return getListaProdutos().stream().mapToDouble(p -> p.getValorUnitario()).sum();
+	}
+	
 	@Override
 	public String toString() {
 		return "Pedido [numeroPedido=" + numeroPedido + ", documento=" + documento + ", tipoDocumento=" + tipoDocumento
 				+ ", nomeCliente=" + nomeCliente + ", listaProdutos=" + listaProdutos + "]";
 	}
+
 }

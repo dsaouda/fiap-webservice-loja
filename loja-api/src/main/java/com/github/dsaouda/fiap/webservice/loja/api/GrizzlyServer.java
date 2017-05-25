@@ -76,7 +76,7 @@ public class GrizzlyServer {
 
 	public void enableLogger() {
 		Logger l = Logger.getLogger("org.glassfish.grizzly.http.server.HttpHandler");
-		l.setLevel(Level.FINE);
+		l.setLevel(Level.ALL);
 		l.setUseParentHandlers(false);
 
 		ConsoleHandler ch = new ConsoleHandler();

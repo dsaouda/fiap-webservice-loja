@@ -9,13 +9,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dsaouda.fiap.webservice.loja.api.exception.FinanceiroNaoPodeDebitarValorException;
 import com.github.dsaouda.fiap.webservice.loja.api.exception.FornecedorNaoPodeRealizarOPedidoException;
+import com.github.dsaouda.fiap.webservice.loja.api.exception.GovernoNaoPodeEmitirNotaException;
+import com.github.dsaouda.fiap.webservice.loja.api.model.Loja;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Pedido;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
 import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;
 import com.github.dsaouda.fiap.webservice.loja.financeiro.client.factory.FinanceiroPortFactory;
 import com.github.dsaouda.fiap.webservice.loja.fornecedor.client.factory.FornecedorPortFactory;
+import com.github.dsaouda.fiap.webservice.loja.governo.client.factory.GovernoPortFactory;
 
 import br.com.fiap.fornecedor.ws.FornecedorException_Exception;
 import br.com.fiap.fornecedor.ws.FornecedorWS;
@@ -23,18 +29,24 @@ import br.com.fiap.fornecedor.ws.PedidoDTO;
 import br.com.fiap.fornecedor.ws.ProdutoDTO;
 import br.com.fincliente.Cobranca;
 import br.com.fincliente.CobrarCliente;
+import br.com.governo.ws.Governo;
+import br.com.governo.ws.NotaFiscal;
 import io.swagger.annotations.Api;
 
 @Api
 @Path("/efetuar-compra")
 public class EfetuarCompraService {
 	
+	private Logger logger = LoggerFactory.getLogger(EfetuarCompraService.class);
+	
 	private FornecedorWS fornecedorService;
 	private CobrarCliente financeiroService;
+	private Governo governoService;
 
 	public EfetuarCompraService() {
-		fornecedorService = FornecedorPortFactory.create();
-		financeiroService = FinanceiroPortFactory.create();
+		fornecedorService = FornecedorPortFactory.create(Loja.FORNECEDOR_USERNAME, Loja.FORNECEDOR_PASSWORD);
+		financeiroService = FinanceiroPortFactory.create(Loja.FINANCEIRO_CARGO, Loja.FINANCEIRO_ESTABELECIMENTO);
+		governoService = GovernoPortFactory.create(Loja.GOVERNO_DOCUMENTO, Loja.GOVERNO_SENHA);
 	}
 	
 	@POST
@@ -44,18 +56,16 @@ public class EfetuarCompraService {
 		
 		try {
 			preencherProdutoNoPedido(pedido);
+			logger.info("{}", pedido);
 			
 			if (enviarPedidoFornecedor(pedido) == false) {
 				throw new FornecedorNaoPodeRealizarOPedidoException();
 			}
-	
-			//emitir nota fiscal com grupo governo
-			//boolean notaEmitida = governoClient.emitirNota();
-			//throw new GovernoNaoPOdeEmitirNotaException();
 			
-			double valorTotal = 0;
+			NotaFiscal notaFiscal = emitirNotaNoGoverno(pedido);
+			logger.info("{}", notaFiscal);
 			
-			if (debitarValorFinanceira(pedido, valorTotal) == false) {
+			if (debitarValorFinanceira(pedido, notaFiscal.getValorTotalComImpostos()) == false) {
 				throw new FinanceiroNaoPodeDebitarValorException();
 			}
 			
@@ -65,6 +75,8 @@ public class EfetuarCompraService {
 			return Response.ok(true).build();
 			
 		} catch (Exception e) {
+			logger.error("ocorreu um erro {}", e.getMessage());
+			
 			e.printStackTrace();
 			voltarProdutosNoEstoque(pedido);
 			
@@ -72,6 +84,16 @@ public class EfetuarCompraService {
 				.header("x-exception-message", e.getMessage())
 				.header("x-exception-class", e.getClass().getName())
 				.build();
+		}
+	}
+
+	private NotaFiscal emitirNotaNoGoverno(Pedido pedido) {
+		try {
+			logger.info("emitindo nota no governo");
+			return governoService.emitirNotaFiscal(pedido.getDocumento(), pedido.getValorTotal());
+		} catch (Exception e) {
+			logger.error("erro ao emitir nota no governo");
+			throw new GovernoNaoPodeEmitirNotaException();
 		}
 	}
 
@@ -84,7 +106,13 @@ public class EfetuarCompraService {
 		cobranca.setCpf(Long.parseLong(pedido.getDocumento()));
 		cobranca.setValor(valorTotal);
 		
-		return financeiroService.cobrar(cobranca);
+		try {
+			logger.info("enviando dados para financeira");
+			return financeiroService.cobrar(cobranca);
+		} catch (Exception e) {
+			logger.error("erro ao enviar dados a financeira");
+			return false;
+		}
 	}
 
 	private void preencherProdutoNoPedido(Pedido pedido) {
@@ -101,7 +129,9 @@ public class EfetuarCompraService {
 		pedido.getListaProdutos().stream().forEach(Produto::decrementaDoEstoque);
 	}
 
-	private boolean enviarPedidoFornecedor(Pedido pedido) throws FornecedorException_Exception {
+	private boolean enviarPedidoFornecedor(Pedido pedido) {
+		logger.info("enviar pedido fornecedor");
+		
 		PedidoDTO pedidoFornecedor = new PedidoDTO();
 		pedidoFornecedor.setCpfCnpj(pedido.getDocumento());
 		
@@ -111,7 +141,7 @@ public class EfetuarCompraService {
 			
 			if (p.getQuantidadeEstoque() == 0) {
 				
-				System.out.println("enviarPedidoFornecedor() -> produto: " + p.getCodigo());
+				logger.info("enviar produto {} ", p.getCodigo());
 				
 				//adiciona todos os produtos que precisa enviar no pedido
 				ProdutoDTO produtoFornecedor = new ProdutoDTO();
@@ -124,9 +154,16 @@ public class EfetuarCompraService {
 		}
 		
 		if (hasFazerPedido == true) {
-			return fornecedorService.efetuarPedido(pedidoFornecedor);
+			try {
+				logger.info("enviando pedido ao fornecedor");
+				return fornecedorService.efetuarPedido(pedidoFornecedor);
+			} catch (FornecedorException_Exception e) {
+				logger.error("erro ao tentar enviar pedido ao fornecedor");
+				return false;
+			}
 		}
 		
+		logger.info("não foram enviados pedidos ao fornecedor");
 		return true;
 	}
 	
