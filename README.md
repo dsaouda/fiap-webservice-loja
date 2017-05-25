@@ -1,6 +1,8 @@
 # fiap-webservice-loja
 
-Download projeto versão eclipse https://github.com/dsaouda/fiap-webservice-loja/releases/tag/1.0.0
+Projeto hospedado no heroku, pode ser acessado através da url https://fiap-ws-loja.herokuapp.com/application.wadl
+
+Para baixar o projeto na versão eclipse acess https://github.com/dsaouda/fiap-webservice-loja/releases/tag/1.0.0
  
 # Print soap ui
  
