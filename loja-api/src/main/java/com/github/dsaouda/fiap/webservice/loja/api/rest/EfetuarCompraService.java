@@ -26,7 +26,7 @@ import io.swagger.annotations.Api;
 @Path("/efetuar-compra")
 public class EfetuarCompraService {
 	
-	private static final String CNPJ_LOJA = null;
+	private static final String CNPJ_LOJA = "87404645000178";
 	private FornecedorWS fornecedorService;
 
 	public EfetuarCompraService() {
