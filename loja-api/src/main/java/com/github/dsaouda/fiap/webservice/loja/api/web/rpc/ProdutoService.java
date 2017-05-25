@@ -1,4 +1,4 @@
-package com.github.dsaouda.fiap.webservice.loja.api.rest;
+package com.github.dsaouda.fiap.webservice.loja.api.web.rpc;
 
 import java.util.Collection;
 

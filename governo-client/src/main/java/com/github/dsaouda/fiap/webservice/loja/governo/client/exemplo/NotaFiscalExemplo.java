@@ -6,7 +6,7 @@ import br.com.governo.ws.Exception_Exception;
 import br.com.governo.ws.Governo;
 import br.com.governo.ws.NotaFiscal;
 
-public class GovernoExemplo {
+public class NotaFiscalExemplo {
 	public static void main(String[] args) throws Exception_Exception {
 		Governo governo = GovernoPortFactory.create("22233344455", "1234");
 		

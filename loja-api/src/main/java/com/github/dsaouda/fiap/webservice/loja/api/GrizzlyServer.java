@@ -30,7 +30,7 @@ public class GrizzlyServer {
 		String port = env("PORT", defaultPort); 
 		uri = URI.create(host + ":" + port);
 
-		String[] packages = {"com.github.dsaouda.fiap.webservice.loja.api.rest", "com.wordnik.swagger.jersey.listing"};
+		String[] packages = {"com.github.dsaouda.fiap.webservice.loja.api.web.rpc", "com.wordnik.swagger.jersey.listing"};
 
 		final ResourceConfig resourceConfig = new ResourceConfig().packages(packages);
 		resourceConfig.register(CORSResponseFilter.class);
