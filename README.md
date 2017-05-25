@@ -6,7 +6,7 @@ Webservice rest rcp grupo loja.
 
 # loja-client
 
-Api para utilizar o webservice loja-api
+Api para utilizar o webservice loja-api. Para maiores informações sobre como o serviço funciona acesse https://github.com/dsaouda/fiap-webservice-loja/tree/master/loja-api
 
 # financeiro-client
 
