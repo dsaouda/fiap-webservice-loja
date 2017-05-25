@@ -1,8 +1,12 @@
 # fiap-webservice-loja
 
- - Download projeto versão eclipse https://github.com/dsaouda/fiap-webservice-loja/releases/tag/1.0.0
- - print soap ui
-
+Download projeto versão eclipse https://github.com/dsaouda/fiap-webservice-loja/releases/tag/1.0.0
+ 
+# Print soap ui
+ 
+- listagem produtos: https://raw.githubusercontent.com/dsaouda/fiap-webservice-loja/master/docs/soap-ui-print-produtos.png
+- simular compra: https://raw.githubusercontent.com/dsaouda/fiap-webservice-loja/master/docs/soap-ui-print-simular-compra.png
+- efetuar-compra: https://raw.githubusercontent.com/dsaouda/fiap-webservice-loja/master/docs/soap-ui-print-efetuar-compra.png
 
 # loja-api
 
