@@ -12,14 +12,14 @@ public class ExemploProdutos {
 		//WebTarget target = client.target("http://localhost:8080");
 		//ProdutoClient produtoClient = new ProdutoClient(target);
 		
-		// OU PADRÃO
+		// OU PADRÃƒO
 		ProdutoClient produtoClient = new ProdutoClient();
 		
 		System.out.println("TODOS OS PRODUTOS");
 		produtoClient.todos().stream().forEach(System.out::println);
 		
 		System.out.println("======================");
-		System.out.println("PRODUTO ÚNICO");
+		System.out.println("PRODUTO ÃšNICO");
 		System.out.println(produtoClient.get(1L));
 	}	
 }

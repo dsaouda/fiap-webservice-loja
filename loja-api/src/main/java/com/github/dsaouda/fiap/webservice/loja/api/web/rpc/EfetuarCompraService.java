@@ -74,7 +74,7 @@ public class EfetuarCompraService {
 			}
 			
 			try {
-				logger.info("solicitação de entrega a transportadora");
+				logger.info("solicitaÃ§Ã£o de entrega a transportadora");
 				GerarFreteResponse entrega = solicitacaoDeEntrega(pedido);
 				logger.info("transportadora resposta {}", entrega.getMensagem());
 				
@@ -127,8 +127,6 @@ public class EfetuarCompraService {
 	}
 
 	private void preencherProdutoNoPedido(Pedido pedido) {
-		//capturando maiores informações sobre o produto
-		//o cliente não envia detalhe dos produtos, apenas código
 		pedido.setListaProdutos(
 			pedido.getListaProdutos()
 				.stream()

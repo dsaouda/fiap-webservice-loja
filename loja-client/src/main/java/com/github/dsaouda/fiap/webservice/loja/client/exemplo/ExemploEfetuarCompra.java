@@ -12,7 +12,7 @@ public class ExemploEfetuarCompra {
 		EfetuarCompraClient client = new EfetuarCompraClient();
 				
 		Pedido pedido = new PedidoBuilder()
-			.cliente("José dos Santos")
+			.cliente("JosÃ© dos Santos")
 			.documento("12364477801", TipoDocumento.CPF)
 			.adicionarProduto(new Produto().setCodigo(1L))
 			.adicionarProduto(new Produto().setCodigo(4L))

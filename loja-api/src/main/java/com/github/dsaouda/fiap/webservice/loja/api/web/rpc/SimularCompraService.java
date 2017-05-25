@@ -94,11 +94,15 @@ public class SimularCompraService {
 	
 	private Double calculaFrete(int quantidadeProdutos, Double valorTotalRemessa ){
 		
-		CalcularFreteRequest req = new CalcularFreteRequest();
-		req.setQuantidadeProdutos(quantidadeProdutos);
-		req.setValorTotalRemessa(valorTotalRemessa);
-
-		CalcularFreteClient client = new CalcularFreteClient();
-		return client.calcular(req);
+		try {
+			CalcularFreteRequest req = new CalcularFreteRequest();
+			req.setQuantidadeProdutos(quantidadeProdutos);
+			req.setValorTotalRemessa(valorTotalRemessa);
+	
+			CalcularFreteClient client = new CalcularFreteClient();
+			return client.calcular(req);
+		} catch (Exception e) {
+			return 0.0;
+		}
 	}
 }

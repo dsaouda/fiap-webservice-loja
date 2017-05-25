@@ -25,12 +25,10 @@ public class ExemploSimularCompra {
 		imprimirResultado(simular);
 		
 		System.out.println("\n\n");
-		System.out.println("Exemplo métodos 2");
+		System.out.println("Exemplo mÃ©todos 2");
 		
-		Set<Long> codigos = new HashSet<>();
-		codigos.add(1L);
-		codigos.add(4L);
-		codigos.add(5L);
+		Set<Long> codigos = new HashSet<>();		
+		codigos.add(9L);
 		
 		SimularCompra simular2 = client.simular(codigos);
 		imprimirResultado(simular2);
