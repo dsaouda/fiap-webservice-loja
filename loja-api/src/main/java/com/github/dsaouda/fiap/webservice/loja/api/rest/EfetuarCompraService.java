@@ -7,17 +7,22 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import com.github.dsaouda.fiap.webservice.loja.api.exception.FinanceiroNaoPodeDebitarValorException;
 import com.github.dsaouda.fiap.webservice.loja.api.exception.FornecedorNaoPodeRealizarOPedidoException;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Pedido;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
 import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;
+import com.github.dsaouda.fiap.webservice.loja.financeiro.client.factory.FinanceiroPortFactory;
 import com.github.dsaouda.fiap.webservice.loja.fornecedor.client.factory.FornecedorPortFactory;
 
 import br.com.fiap.fornecedor.ws.FornecedorException_Exception;
 import br.com.fiap.fornecedor.ws.FornecedorWS;
 import br.com.fiap.fornecedor.ws.PedidoDTO;
 import br.com.fiap.fornecedor.ws.ProdutoDTO;
+import br.com.fincliente.Cobranca;
+import br.com.fincliente.CobrarCliente;
 import io.swagger.annotations.Api;
 
 @Api
@@ -25,23 +30,21 @@ import io.swagger.annotations.Api;
 public class EfetuarCompraService {
 	
 	private FornecedorWS fornecedorService;
+	private CobrarCliente financeiroService;
 
 	public EfetuarCompraService() {
 		fornecedorService = FornecedorPortFactory.create();
+		financeiroService = FinanceiroPortFactory.create();
 	}
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean comprar(Pedido pedido) {		
-		//@TODO precisamos debitar do estoque?
-		//@TODO aguardando os outros grupos
+	public Response comprar(Pedido pedido) {		
 		
 		try {
 			preencherProdutoNoPedido(pedido);
 			
-			//enviando para servico fornecedor
-			//se retorno false, então retornar false
 			if (enviarPedidoFornecedor(pedido) == false) {
 				throw new FornecedorNaoPodeRealizarOPedidoException();
 			}
@@ -50,19 +53,38 @@ public class EfetuarCompraService {
 			//boolean notaEmitida = governoClient.emitirNota();
 			//throw new GovernoNaoPOdeEmitirNotaException();
 			
-			//valor total debitado do grupo financeira
-			//financeiraClient.debitarValor(valorTotal);
+			double valorTotal = 0;
+			
+			if (debitarValorFinanceira(pedido, valorTotal) == false) {
+				throw new FinanceiroNaoPodeDebitarValorException();
+			}
 			
 			//solicitacao de entrega ao grupo transportadora
 			//transportadoraClient.solicitarEntrega(produtos);
 			
-			return true;
+			return Response.ok(true).build();
 			
 		} catch (Exception e) {
-			//voltando os produtos no estoque devido a um erro que não permite a venda
-			pedido.getListaProdutos().stream().forEach(Produto::acrescentaNoEstoque);
-			return false;
+			e.printStackTrace();
+			voltarProdutosNoEstoque(pedido);
+			
+			return Response.ok(false)
+				.header("x-exception-message", e.getMessage())
+				.header("x-exception-class", e.getClass().getName())
+				.build();
 		}
+	}
+
+	private void voltarProdutosNoEstoque(Pedido pedido) {
+		pedido.getListaProdutos().stream().forEach(Produto::acrescentaNoEstoque);
+	}
+
+	private boolean debitarValorFinanceira(Pedido pedido, double valorTotal) {
+		Cobranca cobranca = new Cobranca();
+		cobranca.setCpf(Long.parseLong(pedido.getDocumento()));
+		cobranca.setValor(valorTotal);
+		
+		return financeiroService.cobrar(cobranca);
 	}
 
 	private void preencherProdutoNoPedido(Pedido pedido) {
@@ -83,11 +105,15 @@ public class EfetuarCompraService {
 		PedidoDTO pedidoFornecedor = new PedidoDTO();
 		pedidoFornecedor.setCpfCnpj(pedido.getDocumento());
 		
-		//verificando a quantidade de produtos em estoque
-		pedido.getListaProdutos().stream().forEach(p -> {
+		boolean hasFazerPedido = false;
+		
+		for(Produto p : pedido.getListaProdutos()) {
 			
-			//qtd estoque 0, solicitar ao grupo fornecedor, se o grupo não tiver o produto, retornar 0
 			if (p.getQuantidadeEstoque() == 0) {
+				
+				System.out.println("enviarPedidoFornecedor() -> produto: " + p.getCodigo());
+				
+				//adiciona todos os produtos que precisa enviar no pedido
 				ProdutoDTO produtoFornecedor = new ProdutoDTO();
 				produtoFornecedor.setCodigo((int)p.getCodigo());
 				produtoFornecedor.setDescricao(p.getDescricao());
@@ -95,11 +121,13 @@ public class EfetuarCompraService {
 				
 				pedidoFornecedor.getProdutos().add(produtoFornecedor);
 			}
-		});		
+		}
 		
-		//dúvida: Só enviar pedido quando não houver estoque???
-		//fazer uma solicitação para cada pedido???
-		return fornecedorService.efetuarPedido(pedidoFornecedor);
+		if (hasFazerPedido == true) {
+			return fornecedorService.efetuarPedido(pedidoFornecedor);
+		}
+		
+		return true;
 	}
 	
 }

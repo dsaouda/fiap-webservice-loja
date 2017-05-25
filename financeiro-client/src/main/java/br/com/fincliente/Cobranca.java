@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>Classe Java de cobranca complex type.
  * 
- * <p>O seguinte fragmento do esquema especifica o conteúdo esperado contido dentro desta classe.
+ * <p>O seguinte fragmento do esquema especifica o conteï¿½do esperado contido dentro desta classe.
  * 
  * <pre>
  * &lt;complexType name="cobranca">
@@ -33,14 +33,14 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class Cobranca {
 
-    protected int cpf;
+    protected long cpf;
     protected double valor;
 
     /**
-     * Obtém o valor da propriedade cpf.
+     * Obtï¿½m o valor da propriedade cpf.
      * 
      */
-    public int getCpf() {
+    public long getCpf() {
         return cpf;
     }
 
@@ -48,12 +48,12 @@ public class Cobranca {
      * Define o valor da propriedade cpf.
      * 
      */
-    public void setCpf(int value) {
+    public void setCpf(long value) {
         this.cpf = value;
     }
 
     /**
-     * Obtém o valor da propriedade valor.
+     * Obtï¿½m o valor da propriedade valor.
      * 
      */
     public double getValor() {

@@ -10,7 +10,7 @@ public class FinanceiroExemplo {
 		CobrarCliente cobrarClientPort = FinanceiroPortFactory.create();
 		
 		Cobranca cobranca = new Cobranca();
-		cobranca.setCpf(123);
+		cobranca.setCpf(12345678912L);
 		cobranca.setValor(10);
 		
 		System.out.println(cobrarClientPort.cobrar(cobranca));
