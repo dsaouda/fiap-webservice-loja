@@ -15,7 +15,16 @@ public class SimularCompra {
 	private double valorFrete;
 	private double valorImpostos;
 	private double valorTotal;
+	private double porcentagemImpostos;
 	
+	public double getPorcentagemImpostos() {
+		return porcentagemImpostos;
+	}
+
+	public void setPorcentagemImpostos(double porcentagemImpostos) {
+		this.porcentagemImpostos = porcentagemImpostos;
+	}
+
 	public List<String> getValorProdutos() {
 		return valorProdutos;
 	}

@@ -102,6 +102,7 @@ public class SimularCompraService {
 			CalcularFreteClient client = new CalcularFreteClient();
 			return client.calcular(req);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return 0.0;
 		}
 	}
