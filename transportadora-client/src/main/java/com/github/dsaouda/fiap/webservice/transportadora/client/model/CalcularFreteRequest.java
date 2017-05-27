@@ -8,18 +8,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CalcularFreteRequest {
 	
-	private Integer quantidadeProdutos;
-	private Double valorTotalRemessa;
+	private int quantidadeProdutos;
+	private double valorTotalRemessa;
+	
+	public CalcularFreteRequest() {}
+	
 	public Integer getQuantidadeProdutos() {
 		return quantidadeProdutos;
 	}
-	public void setQuantidadeProdutos(Integer quantidadeProdutos) {
+	public void setQuantidadeProdutos(int quantidadeProdutos) {
 		this.quantidadeProdutos = quantidadeProdutos;
 	}
 	public Double getValorTotalRemessa() {
 		return valorTotalRemessa;
 	}
-	public void setValorTotalRemessa(Double valorTotalRemessa) {
+	public void setValorTotalRemessa(double valorTotalRemessa) {
 		this.valorTotalRemessa = valorTotalRemessa;
 	}
 

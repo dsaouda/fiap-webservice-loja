@@ -13,6 +13,8 @@ public class GerarFreteRequest {
 	private Integer quantidadeProdutos;
 	private Double valorTotalRemessa;
 
+	public GerarFreteRequest() {}
+	
 	public String getCpfCnpjDestinatario() {
 		return cpfCnpjDestinatario;
 	}

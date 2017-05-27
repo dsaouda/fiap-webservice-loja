@@ -10,6 +10,8 @@ public class CalcularFreteResponse {
 	
 	private String valorTotalFrete;
 
+	public CalcularFreteResponse() {}
+	
 	public String getValorTotalFrete() {
 		return valorTotalFrete;
 	}

@@ -41,7 +41,7 @@ public class GrizzlyServer {
 		resourceConfig.register(io.swagger.jaxrs.listing.SwaggerSerializers.class);
 
 		BeanConfig beanConfig = new BeanConfig();
-		beanConfig.setResourcePackage("com.github.dsaouda.fiap.webservice.loja.api.rest");
+		beanConfig.setResourcePackage("com.github.dsaouda.fiap.webservice.loja.api.web.rpc");
 		beanConfig.setVersion("1.0.0");
 		beanConfig.setSchemes(new String[]{ "http", "https" });
 		beanConfig.setHost("fiap-ws-loja.herokuapp.com");

@@ -55,7 +55,7 @@ public class EfetuarCompraService {
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 	public Response comprar(Pedido pedido) {		
 		
 		try {

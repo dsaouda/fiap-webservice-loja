@@ -10,6 +10,8 @@ public class GerarFreteResponse {
 	
 	private String mensagem;
 
+	public GerarFreteResponse() {}
+	
 	public String getMensagem() {
 		return mensagem;
 	}

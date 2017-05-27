@@ -4,6 +4,8 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
+import org.glassfish.jersey.jackson.JacksonFeature;
+
 
 abstract class AbstractClient {
 	protected WebTarget target;
@@ -21,6 +23,7 @@ abstract class AbstractClient {
 		
 		Client client = ClientBuilder.newClient();
 		client.register(new Authenticator(user, password));
+		client.register(JacksonFeature.class);
 		target = client.target(url);
 	}
 }
