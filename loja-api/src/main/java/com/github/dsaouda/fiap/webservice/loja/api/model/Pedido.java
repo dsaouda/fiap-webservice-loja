@@ -66,4 +66,8 @@ public class Pedido {
 				+ ", nomeCliente=" + nomeCliente + ", listaProdutos=" + listaProdutos + "]";
 	}
 
+	public int getTotalProdutos() {
+		return listaProdutos.size();
+	}
+
 }

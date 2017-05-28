@@ -1,6 +1,6 @@
 package com.github.dsaouda.fiap.webservice.loja.api.exception;
 
-public class FinanceiroNaoPodeDebitarValorException extends Exception {
+public class FinanceiroNaoPodeDebitarValorException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	
 	

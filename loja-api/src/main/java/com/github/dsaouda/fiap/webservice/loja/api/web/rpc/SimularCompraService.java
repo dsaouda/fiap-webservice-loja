@@ -3,7 +3,6 @@ package com.github.dsaouda.fiap.webservice.loja.api.web.rpc;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -14,96 +13,51 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.github.dsaouda.fiap.webservice.loja.api.exception.ProdutoNaoEncontradoException;
-import com.github.dsaouda.fiap.webservice.loja.api.model.Loja;
+import com.github.dsaouda.fiap.webservice.loja.api.manager.GovernoManager;
+import com.github.dsaouda.fiap.webservice.loja.api.manager.ProdutoManager;
+import com.github.dsaouda.fiap.webservice.loja.api.manager.TransportadoraManager;
 import com.github.dsaouda.fiap.webservice.loja.api.model.Produto;
-import com.github.dsaouda.fiap.webservice.loja.api.repository.ProdutoRepository;
-import com.github.dsaouda.fiap.webservice.loja.governo.client.factory.GovernoPortFactory;
-import com.github.dsaouda.fiap.webservice.transportadora.client.CalcularFreteClient;
-import com.github.dsaouda.fiap.webservice.transportadora.client.model.CalcularFreteRequest;
+import com.github.dsaouda.fiap.webservice.loja.api.model.Produtos;
 
-import br.com.governo.ws.Exception_Exception;
-import br.com.governo.ws.Governo;
 import io.swagger.annotations.Api;
 
 @Api
 @Path("/simular-compra")
 public class SimularCompraService {
 	
-	private Governo governoService;
-
-	public SimularCompraService() {
-		governoService = GovernoPortFactory.create(Loja.GOVERNO_DOCUMENTO, Loja.GOVERNO_SENHA);
-	}
-	
 	@POST	
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 	public Response simular(List<Produto> codigosProdutos) {
-		List<Produto> produtos;
+		Produtos produtos;
 		
 		try {
-			produtos = getProdutos(codigosProdutos);
+			produtos = new ProdutoManager().getProdutoListWhereInCodigo(codigosProdutos);
 		} catch (ProdutoNaoEncontradoException e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 		
-		//valor total dos produtos
-		double valorTotalProdutos = produtos.stream().mapToDouble(p -> p.getValorUnitario()).sum();
-		
-		int quantidadeProdutos = produtos.size();
-		double valorFrete = calculaFrete(quantidadeProdutos, valorTotalProdutos);
+		double valorFrete = new TransportadoraManager().calculaFrete(produtos);
 		double porcentagemImpostos;
 		
 		try {
-			porcentagemImpostos = retornarImpostos();
+			porcentagemImpostos = new GovernoManager().porcentagemImpostos();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return Response.status(Status.BAD_GATEWAY).encoding(e.getMessage()).build();
 		}
 		
-		double valorImpostos = (valorFrete+valorTotalProdutos) * porcentagemImpostos / 100;
-
-		
-		List<String> valoresProdutos = produtos.stream().map(p -> {
-			return p.getCodigo() + " => " + p.getDescricao() + " ("+p.getValorUnitario()+")";
-		}).collect(Collectors.toList());
+		double valorImpostos = (valorFrete+produtos.valorTotal()) * porcentagemImpostos / 100;
 		
 		//preparando a resposta
 		Map<String, Object> response = new LinkedHashMap<>();
-		response.put("valorProdutos", valoresProdutos);
-		response.put("valorTotalProdutos", valorTotalProdutos);
+		response.put("valorProdutos", produtos.valorTotal());
+		response.put("valorTotalProdutos", produtos.valorCadaProduto());
 		response.put("valorFrete", valorFrete);
 		response.put("valorImpostos", valorImpostos);
 		response.put("porcentagemImpostos", porcentagemImpostos);
-		response.put("valorTotal", valorFrete+valorTotalProdutos+valorImpostos);
+		response.put("valorTotal", valorFrete+produtos.valorTotal()+valorImpostos);
 		
 		return Response.ok(response).build();
-	}
-
-	private double retornarImpostos() throws Exception_Exception {
-		double valorImpostos = governoService.listarImpostos().stream().mapToDouble(i -> i.getAliquota()).sum();
-		return valorImpostos;
-	}
-
-	private List<Produto> getProdutos(List<Produto> codigosProdutos) {		
-		List<Produto> produtos = codigosProdutos.stream()
-				.map(p -> ProdutoRepository.findByCodigo(p.getCodigo()))			
-				.collect(Collectors.toList());
-		return produtos;
-	}	 
-	
-	
-	private Double calculaFrete(int quantidadeProdutos, Double valorTotalRemessa ){
-		
-		try {
-			CalcularFreteRequest req = new CalcularFreteRequest();
-			req.setQuantidadeProdutos(quantidadeProdutos);
-			req.setValorTotalRemessa(valorTotalRemessa);
-	
-			CalcularFreteClient client = new CalcularFreteClient();
-			return client.calcular(req);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return 0.0;
-		}
 	}
 }

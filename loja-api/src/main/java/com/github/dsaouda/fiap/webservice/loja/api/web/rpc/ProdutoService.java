@@ -20,12 +20,9 @@ import io.swagger.annotations.Api;
 @Path("/produtos")
 public class ProdutoService {
 	
-	private static int acesso = 0;
-	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 	public Response index() {
-		acesso++;
 		Collection<Produto> produtos = ProdutoRepository.getProdutos().values();
 		return Response.ok(produtos).build();
 	}
@@ -34,8 +31,6 @@ public class ProdutoService {
 	@Path("{codigoProduto}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 	public Response get(@PathParam("codigoProduto") long codigoProduto) {
-		acesso++;
-		
 		try {
 			Produto produto = ProdutoRepository.findByCodigo(codigoProduto);
 			return Response.ok(produto).build();
@@ -43,12 +38,4 @@ public class ProdutoService {
 			return Response.status(Status.NOT_FOUND).entity("produto " + codigoProduto + " não encontrado").build();
 		}
 	}
-	
-	@GET
-	@Path("/acessos")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-	public int acessos() {		
-		return acesso;
-	}
-	
 }
